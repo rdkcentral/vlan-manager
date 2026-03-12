@@ -106,7 +106,9 @@ static ANSC_STATUS EthLink_GetVlanIdAndTPId(const PDML_ETHERNET pEntry, INT *pVl
 static int EthLink_GetActiveWanInterfaces(char *Alias);
 static ANSC_STATUS EthLink_DeleteMarking(PDML_ETHERNET pEntry);
 static ANSC_STATUS EthLink_CreateUnTaggedInterface(PDML_ETHERNET pEntry);
+#if !defined(VLAN_MANAGER_HAL_ENABLED) && !defined(COMCAST_VLAN_HAL_ENABLED)
 static ANSC_STATUS EthLink_DeleteUnTaggedInterface(PDML_ETHERNET pEntry);
+#endif /* !VLAN_MANAGER_HAL_ENABLED && !COMCAST_VLAN_HAL_ENABLED */
 /*TODO
 * Need to be Reviewed after Unification finalised.
 */
@@ -916,6 +918,7 @@ static ANSC_STATUS EthLink_CreateUnTaggedInterface(PDML_ETHERNET pEntry)
     return returnStatus;
 }
 
+#if !defined(VLAN_MANAGER_HAL_ENABLED) && !defined(COMCAST_VLAN_HAL_ENABLED)
 static ANSC_STATUS EthLink_DeleteUnTaggedInterface(PDML_ETHERNET pEntry)
 {
     ANSC_STATUS returnStatus = ANSC_STATUS_SUCCESS;
@@ -937,6 +940,7 @@ static ANSC_STATUS EthLink_DeleteUnTaggedInterface(PDML_ETHERNET pEntry)
 
     return returnStatus;
 }
+#endif /* !VLAN_MANAGER_HAL_ENABLED && !COMCAST_VLAN_HAL_ENABLED */
 
 /* Start Vlan Refresh Handle Thread */
 void* EthLink_RefreshHandleThread(void *Arg)
