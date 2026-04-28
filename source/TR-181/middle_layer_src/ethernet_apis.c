@@ -885,7 +885,7 @@ static ANSC_STATUS EthLink_CreateUnTaggedInterface(PDML_ETHERNET pEntry)
     {
         CcspTraceError(("%s-%d: Failed to get MAC address, creating MACVLAN without custom MAC\n", __FUNCTION__, __LINE__));
         // Create MACVLAN without setting custom MAC - kernel will assign one
-        v_secure_system("ip link add link %s name %s type macvlan mode bridge", 
+        v_secure_system("ip link add link %s name %s type macvlan mode private",
                         pEntry->BaseInterface, pEntry->Name);
     }
     else
@@ -894,10 +894,16 @@ static ANSC_STATUS EthLink_CreateUnTaggedInterface(PDML_ETHERNET pEntry)
                        __FUNCTION__, __LINE__, pEntry->MACAddress, pEntry->MACAddrOffSet));
         
         // Create MACVLAN interface with custom MAC
-        v_secure_system("ip link add link %s name %s address %s type macvlan mode bridge", 
+        v_secure_system("ip link add link %s name %s address %s type macvlan mode private",
                         pEntry->BaseInterface, pEntry->Name, pEntry->MACAddress);
     }
     
+    // Set the allmulticast and multicast on for MACVLAN interface
+    CcspTraceInfo(("%s-%d: Setting allmulticast amd multicast on for MACVLAN interface %s\n",
+                   __FUNCTION__, __LINE__, pEntry->Name));
+    v_secure_system("ip link set %s allmulticast on", pEntry->Name);
+    v_secure_system("ip link set %s multicast on", pEntry->Name);
+
     // Set MTU to default 1500
     CcspTraceInfo(("%s-%d: Setting MTU to 1500 for MACVLAN interface %s\n", 
                    __FUNCTION__, __LINE__, pEntry->Name));
