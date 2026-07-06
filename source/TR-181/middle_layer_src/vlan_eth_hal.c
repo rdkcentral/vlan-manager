@@ -63,10 +63,8 @@
 * PROJECT-SPECIFIC INCLUDE FILES
 *****************************************************************************/
 #include "vlan_eth_hal.h"
-#if defined(VLAN_MANAGER_HAL_ENABLED)
 #include "json_hal_client.h"
 #include <json-c/json.h>
-#endif
 #include "ansc_platform.h"
 /***************************************************************************************
 * GLOBAL SYMBOLS
@@ -312,6 +310,7 @@ int vlan_eth_hal_setMarkings(vlan_configuration_t *config)
 
     return RETURN_OK;
 }
+#endif //VLAN_MANAGER_HAL_ENABLED
 
 /* vlan_eth_hal_deleteInterface() */
 int vlan_eth_hal_deleteInterface(char *ifname, int instanceNumber)
@@ -375,4 +374,3 @@ int vlan_eth_hal_deleteInterface(char *ifname, int instanceNumber)
 
     return RETURN_OK;
 }
-#endif //VLAN_MANAGER_HAL_ENABLED

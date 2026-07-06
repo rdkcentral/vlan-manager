@@ -617,7 +617,6 @@ void * Vlan_Enable(void *Arg)
         {
             CcspTraceError(("[%s][%d]Failed to get vlan interface status \n", __FUNCTION__, __LINE__));
         }
-#if defined(VLAN_MANAGER_HAL_ENABLED)
         if ( ( status != VLAN_IF_NOTPRESENT ) && ( status != VLAN_IF_ERROR ) )
         {
             CcspTraceInfo(("%s %s:VLAN interface(%s) already exists, delete it first\n", __FUNCTION__, VLAN_MARKER_VLAN_IF_CREATE, pEntry->Name));
@@ -628,7 +627,6 @@ void * Vlan_Enable(void *Arg)
             }
             CcspTraceInfo(("%s - %s:Successfully deleted VLAN interface %s\n", __FUNCTION__, VLAN_MARKER_VLAN_IF_DELETE, pEntry->Name));
         }
-#endif
         returnStatus = Vlan_CreateTaggedInterface(pEntry);
         if (ANSC_STATUS_SUCCESS != returnStatus)
         {

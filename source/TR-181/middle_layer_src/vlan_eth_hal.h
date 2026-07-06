@@ -184,6 +184,7 @@ int vlan_eth_hal_createInterface(vlan_configuration_t *config);
 *
 */
 int vlan_eth_hal_setMarkings(vlan_configuration_t *config);
+#endif // VLAN_MANAGER_HAL_ENABLED
 
 /**
 * @description This HAL is used to deassociate an existing vlan interface
@@ -199,5 +200,4 @@ int vlan_eth_hal_setMarkings(vlan_configuration_t *config);
 */
 int vlan_eth_hal_deleteInterface(char *ifname, int instanceNumber);
 
-#endif // VLAN_MANAGER_HAL_ENABLED
 #endif /*__VLAN_ETH_HAL_H__*/
