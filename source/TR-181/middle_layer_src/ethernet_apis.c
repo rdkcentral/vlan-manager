@@ -1174,6 +1174,7 @@ static ANSC_STATUS EthLink_CreateMarkingTable( PDML_ETHERNET pEntry, vlan_config
         return ANSC_STATUS_FAILURE;
     }
 
+    /* Mirror marking values from WanManager onto the VLAN data model. */
     PDML_ETHERNET          p_EthLink    = NULL;
     int                    iLoopCount   = 0;
 
@@ -1213,6 +1214,7 @@ static ANSC_STATUS EthLink_CreateMarkingTable( PDML_ETHERNET pEntry, vlan_config
     }
 
     CcspTraceInfo(("%s : Successfully Created EthLinkTable\n", __FUNCTION__));
+
     return ANSC_STATUS_SUCCESS;
 }
 
