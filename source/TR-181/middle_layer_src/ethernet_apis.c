@@ -1174,6 +1174,11 @@ static ANSC_STATUS EthLink_CreateMarkingTable( PDML_ETHERNET pEntry, vlan_config
         return ANSC_STATUS_FAILURE;
     }
 
+#ifndef FEATURE_WANMGR_L2_MARKING /* WanManager owns L2 Marking */
+    /* Marking table should be created dynamically based on the virtual interface marking entry from WanManager.  */
+    /* But this is difficult, because the VlanManager's marking table is a static table. So keeping VlanManager's */
+    /* marking table as empty and WanManager handles the QoS egress setting                                       */
+
     PDML_ETHERNET          p_EthLink    = NULL;
     int                    iLoopCount   = 0;
 
@@ -1213,6 +1218,9 @@ static ANSC_STATUS EthLink_CreateMarkingTable( PDML_ETHERNET pEntry, vlan_config
     }
 
     CcspTraceInfo(("%s : Successfully Created EthLinkTable\n", __FUNCTION__));
+
+#endif //FEATURE_WANMGR_L2_MARKING
+
     return ANSC_STATUS_SUCCESS;
 }
 
