@@ -1356,6 +1356,12 @@ ANSC_STATUS EthLink_GetMacAddr( PDML_ETHERNET pEntry )
         return ANSC_STATUS_FAILURE;
     }
 
+    if(strlen(acTmpReturnValue) == 0)
+    {
+        CcspTraceError(("[%s][%d]Received empty MAC address value\n", __FUNCTION__, __LINE__));
+        return ANSC_STATUS_FAILURE;
+    }
+
     for(i = 0; acTmpReturnValue[i] != '\0'; i++)
     {
         if(acTmpReturnValue[i] != ':')
