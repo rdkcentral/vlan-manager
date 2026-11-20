@@ -48,6 +48,7 @@
 **********************************************************************************/
 
 #include <syscfg/syscfg.h>
+#include <stdio.h>
 
 #ifdef __GNUC__
 #ifndef _BUILD_ANDROID
@@ -245,7 +246,7 @@ int main(int argc, char* argv[])
 
     char *subSys            = NULL;  
     DmErr_t    err;
-
+    printf("Test Coverity %s");
     for (idx = 1; idx < argc; idx++)
     {
         if ( (strcmp(argv[idx], "-subsys") == 0) )
