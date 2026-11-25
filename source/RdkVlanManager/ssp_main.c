@@ -48,6 +48,9 @@
 **********************************************************************************/
 
 #include <syscfg/syscfg.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #ifdef __GNUC__
 #ifndef _BUILD_ANDROID
@@ -242,6 +245,7 @@ int main(int argc, char* argv[])
     int                             idx = 0;
 	char                            cmd[1024]          = {0};
     FILE                           *fd                 = NULL;
+    int                             pidFd              = -1;
 
     char *subSys            = NULL;  
     DmErr_t    err;
@@ -271,18 +275,24 @@ int main(int argc, char* argv[])
         daemonize();
     }
 
-    fd = fopen("/var/tmp/vlanmanager.pid", "w+");
-    if ( !fd )
+    pidFd = open("/var/tmp/vlanmanager.pid", O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+    if ( pidFd < 0 )
     {
         CcspTraceError(("Create /var/tmp/vlanmanager.pid error. \n"));
         return 1;
     }
-    else
+
+    fd = fdopen(pidFd, "w");
+    if ( !fd )
     {
-        sprintf(cmd, "%d", getpid());
-        fputs(cmd, fd);
-        fclose(fd);
+        close(pidFd);
+        CcspTraceError(("Open /var/tmp/vlanmanager.pid stream error. \n"));
+        return 1;
     }
+
+    sprintf(cmd, "%d", getpid());
+    fputs(cmd, fd);
+    fclose(fd);
 
 #ifdef INCLUDE_BREAKPAD
     breakpad_ExceptionHandler();
