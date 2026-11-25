@@ -281,6 +281,12 @@ int main(int argc, char* argv[])
         CcspTraceError(("Create /var/tmp/vlanmanager.pid error. \n"));
         return 1;
     }
+    if ( fchmod(pidFd, S_IRUSR | S_IWUSR) < 0 )
+    {
+        close(pidFd);
+        CcspTraceError(("Restrict /var/tmp/vlanmanager.pid permissions error. \n"));
+        return 1;
+    }
 
     fd = fdopen(pidFd, "w");
     if ( !fd )
