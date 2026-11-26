@@ -1285,6 +1285,7 @@ static ANSC_STATUS EthLink_GetUnTaggedVlanInterfaceStatus(const char *iface, eth
 static ANSC_STATUS EthLink_GetVlanIdAndTPId(const PDML_ETHERNET pEntry, INT *pVlanId, ULONG *pTPId)
 {
     INT VLANInstance = -1;
+    ULONG VlanInstanceNum = 0;
     ULONG VlanCount = 0;
     ANSC_HANDLE pNewEntry = NULL;
     CHAR BaseInterface[64] = {0};
@@ -1298,14 +1299,18 @@ static ANSC_STATUS EthLink_GetVlanIdAndTPId(const PDML_ETHERNET pEntry, INT *pVl
     VlanCount = Vlan_GetEntryCount(NULL);
     for (int i = 0; i < VlanCount; i++)
     {
-        pNewEntry = Vlan_GetEntry(NULL, i, (PULONG)&VLANInstance);
+        pNewEntry = Vlan_GetEntry(NULL, i, &VlanInstanceNum);
         if (pNewEntry != NULL)
         {
+            ULONG BaseInterfaceSize = sizeof(BaseInterface);
             memset(BaseInterface, 0, sizeof(BaseInterface));
-            if (Vlan_GetParamStringValue(pNewEntry, "X_RDK_BaseInterface", BaseInterface, (PULONG)sizeof(BaseInterface)) == 0)
+            if (Vlan_GetParamStringValue(pNewEntry, "X_RDK_BaseInterface", BaseInterface, &BaseInterfaceSize) == 0)
             {
                 if( 0 == strncmp(pEntry->BaseInterface, BaseInterface, 3) )
+                {
+                    VLANInstance = (INT)VlanInstanceNum;
                     break;
+                }
             }
         }
         pNewEntry = NULL;
