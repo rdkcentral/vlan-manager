@@ -214,7 +214,7 @@ Vlan_GetStatus
 static ANSC_STATUS Vlan_SetEthLink(PDML_VLAN pEntry, BOOL enable, BOOL PriTag)
 {
     INT iEthLinkInstance = -1;
-    INT EthLinkInstance = -1;
+    ULONG EthLinkInstance = 0;
     ANSC_HANDLE pNewEntry = NULL;
 
 
@@ -230,7 +230,7 @@ static ANSC_STATUS Vlan_SetEthLink(PDML_VLAN pEntry, BOOL enable, BOOL PriTag)
     CcspTraceInfo(("%s-%d: iEthLinkInstance=%d \n",__FUNCTION__, __LINE__, iEthLinkInstance));
     if (iEthLinkInstance > 0)
     {
-        pNewEntry = EthLink_GetEntry(NULL, (iEthLinkInstance - 1), (PULONG)&EthLinkInstance);
+        pNewEntry = EthLink_GetEntry(NULL, (iEthLinkInstance - 1), &EthLinkInstance);
         if (pNewEntry == NULL)
         {
            CcspTraceError(("%s Failed to add table \n", __FUNCTION__));
@@ -425,7 +425,7 @@ void * Vlan_Disable(void *Arg)
 static ANSC_STATUS Vlan_GetEthLinkMacOffSet(PDML_VLAN pEntry, int* pOffSet)
 {
     INT iEthLinkInstance = -1;
-    INT EthLinkInstance = -1;
+    ULONG EthLinkInstance = 0;
     ANSC_HANDLE pNewEntry = NULL;
 
 
@@ -441,7 +441,7 @@ static ANSC_STATUS Vlan_GetEthLinkMacOffSet(PDML_VLAN pEntry, int* pOffSet)
     CcspTraceInfo(("%s-%d: iEthLinkInstance=%d \n",__FUNCTION__, __LINE__, iEthLinkInstance));
     if (iEthLinkInstance > 0)
     {
-        pNewEntry = EthLink_GetEntry(NULL, (iEthLinkInstance - 1), (PULONG)&EthLinkInstance);
+        pNewEntry = EthLink_GetEntry(NULL, (iEthLinkInstance - 1), &EthLinkInstance);
         if (pNewEntry == NULL)
         {
            CcspTraceError(("%s Failed to add table \n", __FUNCTION__));
@@ -496,7 +496,11 @@ static ANSC_STATUS Vlan_SetMacAddr( PDML_VLAN pEntry )
         }
     }
     acTmpReturnValue[j] = '\0';
-    sscanf(acTmpReturnValue, "%64llx", &number);
+    if (sscanf(acTmpReturnValue, "%64llx", &number) != 1)
+    {
+        CcspTraceError(("[%s][%d] Failed to parse BaseMacAddress\n", __FUNCTION__, __LINE__));
+        return ANSC_STATUS_FAILURE;
+    }
 
     if (Vlan_GetEthLinkMacOffSet(pEntry, &add) == ANSC_STATUS_FAILURE)
     {
@@ -577,11 +581,12 @@ static ANSC_STATUS Vlan_CreateTaggedInterface(PDML_VLAN pEntry)
     VlanCfg.TPId   = pEntry->TPId;
 
     {
-        INT iEthLinkInstance = -1, EthLinkInstance = -1;
+        INT iEthLinkInstance = -1;
+        ULONG EthLinkInstance = 0;
         if (strlen(pEntry->LowerLayers) > 0)
             sscanf(pEntry->LowerLayers, "Device.X_RDK_Ethernet.Link.%d", &iEthLinkInstance);
         PDML_ETHERNET pEthLink = (iEthLinkInstance > 0) ?
-            (PDML_ETHERNET)EthLink_GetEntry(NULL, (iEthLinkInstance - 1), (PULONG)&EthLinkInstance) : NULL;
+            (PDML_ETHERNET)EthLink_GetEntry(NULL, (iEthLinkInstance - 1), &EthLinkInstance) : NULL;
         if (pEthLink == NULL || EthLink_GetMarking(pEthLink, &VlanCfg) == ANSC_STATUS_FAILURE)
         {
             CcspTraceError(("%s Failed to Get Marking, so Can't Create Vlan Interface(%s) \n", __FUNCTION__, pEntry->Alias));
@@ -629,11 +634,12 @@ static ANSC_STATUS Vlan_CreateTaggedInterface(PDML_VLAN pEntry)
     strncpy(VlanCfg.L3Interface, pEntry->Name, sizeof(VlanCfg.L3Interface) - 1);
     VlanCfg.VLANId = pEntry->VLANId;
     {
-        INT iEthLinkInstance = -1, EthLinkInstance = -1;
+        INT iEthLinkInstance = -1;
+        ULONG EthLinkInstance = 0;
         if (strlen(pEntry->LowerLayers) > 0)
             sscanf(pEntry->LowerLayers, "Device.X_RDK_Ethernet.Link.%d", &iEthLinkInstance);
         PDML_ETHERNET pEthLink = (iEthLinkInstance > 0) ?
-            (PDML_ETHERNET)EthLink_GetEntry(NULL, (iEthLinkInstance - 1), (PULONG)&EthLinkInstance) : NULL;
+            (PDML_ETHERNET)EthLink_GetEntry(NULL, (iEthLinkInstance - 1), &EthLinkInstance) : NULL;
         if (pEthLink != NULL)
             EthLink_GetMarking(pEthLink, &VlanCfg);
     }
