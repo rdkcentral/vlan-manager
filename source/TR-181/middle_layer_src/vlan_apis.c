@@ -496,7 +496,11 @@ static ANSC_STATUS Vlan_SetMacAddr( PDML_VLAN pEntry )
         }
     }
     acTmpReturnValue[j] = '\0';
-    sscanf(acTmpReturnValue, "%64llx", &number);
+    if (sscanf(acTmpReturnValue, "%64llx", &number) != 1)
+    {
+        CcspTraceError(("[%s][%d] Failed to parse BaseMacAddress\n", __FUNCTION__, __LINE__));
+        return ANSC_STATUS_FAILURE;
+    }
 
     if (Vlan_GetEthLinkMacOffSet(pEntry, &add) == ANSC_STATUS_FAILURE)
     {
