@@ -147,7 +147,7 @@ static ANSC_STATUS EthLink_Initialize( ANSC_HANDLE hThisObject)
         return ANSC_STATUS_FAILURE;
     }
 
-    memset(pEthCfg, 0, sizeof(DML_ETHERNET));
+    memset(pEthCfg, 0, sizeof(DML_ETHERNET) * linkCount);
 
     for(nIndex = 0; nIndex < linkCount; nIndex++)
     {
